@@ -92,6 +92,7 @@ def jarvis_status():
             "ai_helpdesk": "pending",
             "monitoring": "pending"
         }
+    }
     from fastapi.responses import HTMLResponse
 from pathlib import Path
 
