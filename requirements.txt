@@ -1,2 +1,5 @@
 fastapi
 uvicorn
+asyncpg
+pydantic[email]
+python-dotenv
