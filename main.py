@@ -1,20 +1,120 @@
-from fastapi import FastAPI
+
+from fastapi import FastAPI, HTTPException
 from fastapi.responses import HTMLResponse
+from pydantic import BaseModel
+from typing import Optional
 from pathlib import Path
-
-app = FastAPI()
-
+import os
+ 
+app = FastAPI(title="JARVIS v6 - Automotive OS")
+ 
+ 
+class Product(BaseModel):
+    ean: Optional[str] = None
+    oem: Optional[str] = None
+    name: str
+    brand: str
+    price_buy: float
+    margin_pct: float = 25.0
+    stock: int = 0
+    status: str = "ACTIVE"
+ 
+ 
 @app.get("/")
 def root():
-    return {"status": "online", "system": "JARVIS v6"}
-
+    return {
+        "status": "online",
+        "system": "JARVIS v6",
+        "version": "0.5.0",
+        "modules": 11
+    }
+ 
+ 
 @app.get("/health")
 def health():
     return {"status": "ok"}
-
+ 
+ 
 @app.get("/web", response_class=HTMLResponse)
 def web():
     try:
         return Path("index.html").read_text(encoding="utf-8")
-    except:
+    except Exception:
         return "<h1>JARVIS v6 online</h1>"
+ 
+ 
+@app.get("/jarvis/status")
+def jarvis_status():
+    return {
+        "system": "JARVIS v6",
+        "status": "NORMAL",
+        "version": "0.5.0",
+        "modules": {
+            "feed_engine": "ready",
+            "pricing_engine": "online",
+            "product_validator": "online",
+            "truth_layer": "online",
+            "control_layer": "online",
+            "order_engine": "pending",
+            "tracking_engine": "pending",
+            "security_engine": "pending",
+            "legal_engine": "pending",
+            "ai_helpdesk": "pending",
+            "monitoring": "pending"
+        }
+    }
+ 
+ 
+@app.post("/pricing/calculate")
+def calculate_price(product: Product):
+    price_sell = product.price_buy * (1 + product.margin_pct / 100)
+    profit = price_sell - product.price_buy
+    status = "OK"
+    if product.margin_pct < 12:
+        status = "LOW_MARGIN"
+    if product.stock == 0:
+        status = "OUT_OF_STOCK"
+    return {
+        "name": product.name,
+        "price_buy": product.price_buy,
+        "price_sell": round(price_sell, 2),
+        "profit": round(profit, 2),
+        "margin_pct": product.margin_pct,
+        "stock": product.stock,
+        "status": status
+    }
+ 
+ 
+@app.post("/products/validate")
+def validate_product(product: Product):
+    issues = []
+    if product.price_buy <= 0:
+        issues.append("INVALID_PRICE")
+    if product.stock < 0:
+        issues.append("INVALID_STOCK")
+    if not product.name:
+        issues.append("MISSING_NAME")
+    if product.margin_pct < 12:
+        issues.append("LOW_MARGIN")
+    if not product.ean and not product.oem:
+        issues.append("MISSING_IDENTIFIER")
+    return {
+        "valid": len(issues) == 0,
+        "issues": issues,
+        "product": product.name,
+        "recommendation": "BLOCK" if len(issues) > 0 else "PUBLISH"
+    }
+ 
+ 
+@app.get("/docs/jarvis")
+def jarvis_docs():
+    return {
+        "endpoints": {
+            "GET /": "Status systemu",
+            "GET /health": "Health check",
+            "GET /web": "Frontend web",
+            "GET /jarvis/status": "Status vsech modulu",
+            "POST /pricing/calculate": "Vypocet prodejni ceny",
+            "POST /products/validate": "Validace produktu"
+        }
+    }
