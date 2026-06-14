@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JARVIS v6 - Dashboard</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,sans-serif;background:#080808;color:#ccc;min-height:100vh}
+nav{background:#0a0a0a;border-bottom:1px solid #1a1a1a;padding:12px 24px;display:flex;align-items:center;gap:12px}
+#pulse{width:8px;height:8px;border-radius:50%;background:#1D9E75}
+.logo{font-size:14px;font-weight:600;color:#eee;letter-spacing:.06em}
+.ver{font-size:11px;color:#333;margin-left:4px}
+.stat{margin-left:auto;font-size:11px;color:#1D9E75}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;padding:24px}
+.card{background:#0f0f0f;border:1px solid #1a1a1a;border-radius:10px;padding:20px}
+.card h3{font-size:11px;color:#555;text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px}
+.card .val{font-size:28px;font-weight:700;color:#eee}
+.card .sub{font-size:12px;color:#444;margin-top:4px}
+.card.green .val{color:#1D9E75}
+.card.red .val{color:#e05252}
+.card.yellow .val{color:#e0a952}
+.section{padding:0 24px 24px}
+.section h2{font-size:13px;color:#555;text-transform:uppercase;letter-spacing:.08em;margin-bottom:16px}
+table{width:100%;border-collapse:collapse}
+th{font-size:11px;color:#444;text-align:left;padding:8px 12px;border-bottom:1px solid #1a1a1a}
+td{font-size:13px;color:#aaa;padding:10px 12px;border-bottom:1px solid #111}
+tr:hover td{background:#0f0f0f}
+.badge{display:inline-block;font-size:10px;padding:2px 8px;border-radius:20px;font-weight:500}
+.badge.created{background:#0d2218;color:#1D9E75;border:1px solid #1D9E75}
+.badge.confirmed{background:#0d1a2a;color:#52a8e0;border:1px solid #52a8e0}
+.badge.cancelled{background:#2a0d0d;color:#e05252;border:1px solid #e05252}
+.badge.normal{background:#0d2218;color:#1D9E75}
+.badge.safe{background:#2a0d0d;color:#e05252}
+.badge.degraded{background:#2a1a0d;color:#e0a952}
+.controls{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px;padding:0 24px}
+.btn{padding:8px 16px;border-radius:8px;border:1px solid #222;background:#111;color:#888;font-size:12px;cursor:pointer;transition:all .15s}
+.btn:hover{border-color:#333;color:#ccc}
+.btn.danger{border-color:#5c2020;color:#e05252}
+.btn.danger:hover{background:#2a0d0d}
+.btn.success{border-color:#1D9E75;color:#1D9E75}
+.btn.success:hover{background:#0d2218}
+.modules{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px;padding:0 24px 24px}
+.mod{background:#0f0f0f;border:1px solid #1a1a1a;border-radius:8px;padding:12px;display:flex;align-items:center;gap:10px}
+.mod-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.mod-dot.online{background:#1D9E75}
+.mod-dot.ready{background:#52a8e0}
+.mod-dot.pending{background:#333}
+.mod-name{font-size:12px;color:#666}
+.mod-status{font-size:10px;margin-left:auto}
+.mod-status.online{color:#1D9E75}
+.mod-status.ready{color:#52a8e0}
+.mod-status.pending{color:#333}
+#refresh{font-size:11px;color:#333;padding:0 24px;margin-bottom:16px}
+</style>
+</head>
+<body>
+
+<nav>
+  <div id="pulse"></div>
+  <span class="logo">JARVIS</span><span class="ver">v6 Dashboard</span>
+  <span class="stat" id="sys-status">Nacitam...</span>
+</nav>
+
+<div class="grid">
+  <div class="card green">
+    <h3>System</h3>
+    <div class="val" id="system-mode">-</div>
+    <div class="sub" id="system-version">-</div>
+  </div>
+  <div class="card">
+    <h3>Objednavky celkem</h3>
+    <div class="val" id="orders-total">-</div>
+    <div class="sub">vsechny stavy</div>
+  </div>
+  <div class="card green">
+    <h3>Potvrzene</h3>
+    <div class="val" id="orders-confirmed">-</div>
+    <div class="sub">CONFIRMED</div>
+  </div>
+  <div class="card yellow">
+    <h3>Cekajici</h3>
+    <div class="val" id="orders-created">-</div>
+    <div class="sub">CREATED - ceka na potvrzeni</div>
+  </div>
+  <div class="card red">
+    <h3>Zrusene</h3>
+    <div class="val" id="orders-cancelled">-</div>
+    <div class="sub">CANCELLED</div>
+  </div>
+  <div class="card green">
+    <h3>Trzby celkem</h3>
+    <div class="val" id="revenue-total">-</div>
+    <div class="sub">suma vsech objednavek</div>
+  </div>
+</div>
+
+<div class="section">
+  <h2>Rizeni systemu</h2>
+</div>
+<div class="controls">
+  <button class="btn success" onclick="call('/control/start_checkout')">Zapnout checkout</button>
+  <button class="btn danger" onclick="call('/control/stop_checkout')">Vypnout checkout</button>
+  <button class="btn danger" onclick="call('/control/safe_mode')">SAFE MODE</button>
+  <button class="btn success" onclick="call('/control/normal_mode')">NORMAL MODE</button>
+  <button class="btn" onclick="loadAll()">Obnovit data</button>
+</div>
+
+<div class="section">
+  <h2>Moduly</h2>
+</div>
+<div class="modules" id="modules-grid"></div>
+
+<div class="section">
+  <h2>Posledni objednavky</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Zakaznik</th>
+        <th>Email</th>
+        <th>Castka</th>
+        <th>Stav</th>
+        <th>Akce</th>
+      </tr>
+    </thead>
+    <tbody id="orders-table"></tbody>
+  </table>
+</div>
+
+<div id="refresh">Posledni aktualizace: <span id="last-refresh">-</span></div>
+
+<script>
+const API = "https://jarvis-v6-production.up.railway.app";
+
+async function fetchJSON(url) {
+  try {
+    const r = await fetch(API + url);
+    return await r.json();
+  } catch(e) {
+    return null;
+  }
+}
+
+async function call(endpoint) {
+  try {
+    const r = await fetch(API + endpoint, {method: "POST"});
+    const d = await r.json();
+    alert(JSON.stringify(d, null, 2));
+    loadAll();
+  } catch(e) {
+    alert("Chyba: " + e.message);
+  }
+}
+
+async function loadStatus() {
+  const d = await fetchJSON("/jarvis/status");
+  if (!d) return;
+  document.getElementById("sys-status").textContent = "● " + d.status;
+  document.getElementById("system-mode").textContent = d.status;
+  document.getElementById("system-version").textContent = "verze " + d.version;
+
+  const grid = document.getElementById("modules-grid");
+  grid.innerHTML = "";
+  for (const [name, status] of Object.entries(d.modules)) {
+    const mod = document.createElement("div");
+    mod.className = "mod";
+    mod.innerHTML = `<div class="mod-dot ${status}"></div><span class="mod-name">${name.replace(/_/g," ")}</span><span class="mod-status ${status}">${status}</span>`;
+    grid.appendChild(mod);
+  }
+}
+
+async function loadOrders() {
+  const d = await fetchJSON("/orders");
+  if (!d) return;
+
+  document.getElementById("orders-total").textContent = d.total;
+
+  const orders = d.orders || [];
+  let confirmed = 0, created = 0, cancelled = 0, revenue = 0;
+  orders.forEach(o => {
+    if (o.status === "CONFIRMED") confirmed++;
+    if (o.status === "CREATED") created++;
+    if (o.status === "CANCELLED") cancelled++;
+    if (o.status !== "CANCELLED") revenue += o.price_total || 0;
+  });
+
+  document.getElementById("orders-confirmed").textContent = confirmed;
+  document.getElementById("orders-created").textContent = created;
+  document.getElementById("orders-cancelled").textContent = cancelled;
+  document.getElementById("revenue-total").textContent = revenue.toFixed(2) + " Kc";
+
+  const tbody = document.getElementById("orders-table");
+  tbody.innerHTML = "";
+  if (orders.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#333;padding:24px">Zadne objednavky</td></tr>';
+    return;
+  }
+  orders.slice().reverse().forEach(o => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>#${o.id}</td>
+      <td>${o.customer_name}</td>
+      <td>${o.customer_email}</td>
+      <td>${(o.price_total||0).toFixed(2)} Kc</td>
+      <td><span class="badge ${o.status.toLowerCase()}">${o.status}</span></td>
+      <td>
+        ${o.status === "CREATED" ? `<button class="btn success" style="padding:4px 10px;font-size:11px" onclick="confirmOrder(${o.id})">Potvrdit</button>` : ""}
+        ${o.status === "CREATED" ? `<button class="btn danger" style="padding:4px 10px;font-size:11px;margin-left:4px" onclick="cancelOrder(${o.id})">Zrusit</button>` : ""}
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+async function confirmOrder(id) {
+  const r = await fetch(API + "/orders/" + id + "/confirm", {method: "POST"});
+  const d = await r.json();
+  loadOrders();
+}
+
+async function cancelOrder(id) {
+  if (!confirm("Zrusit objednavku #" + id + "?")) return;
+  const r = await fetch(API + "/orders/" + id + "/cancel", {method: "POST"});
+  loadOrders();
+}
+
+async function loadAll() {
+  await Promise.all([loadStatus(), loadOrders()]);
+  document.getElementById("last-refresh").textContent = new Date().toLocaleTimeString("cs-CZ");
+}
+
+loadAll();
+setInterval(loadAll, 30000);
+</script>
+</body>
+</html>
