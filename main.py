@@ -29,7 +29,7 @@ def web():
     try:
         return Path("index.html").read_text(encoding="utf-8")
     except:
-        return "<h1>JARVIS v6 - Web coming soon</h1>"
+        return "<h1>JARVIS v6 online</h1>"
 
 @app.post("/pricing/calculate")
 def calculate_price(product: Product):
@@ -60,4 +60,3 @@ def validate_product(product: Product):
 @app.get("/jarvis/status")
 def jarvis_status():
     return {"system": "JARVIS v6", "status": "NORMAL", "modules": {"feed_engine": "ready", "pricing_engine": "online", "product_validator": "online", "order_engine": "pending", "tracking_engine": "pending", "security_engine": "pending", "legal_engine": "pending", "ai_helpdesk": "pending", "monitoring": "pending"}}
-Paket "Potvrdit změny" .
