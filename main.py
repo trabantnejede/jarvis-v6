@@ -1,10 +1,8 @@
-
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, List
 from pathlib import Path
-import os
  
 app = FastAPI(title="JARVIS v6 - Automotive OS")
  
@@ -20,12 +18,28 @@ class Product(BaseModel):
     status: str = "ACTIVE"
  
  
+class OrderItem(BaseModel):
+    product_name: str
+    ean: Optional[str] = None
+    oem: Optional[str] = None
+    quantity: int = 1
+    price_unit: float
+    supplier_code: Optional[str] = "ELIT_CZ"
+ 
+ 
+class Order(BaseModel):
+    customer_email: str
+    customer_name: str
+    delivery_address: str
+    items: List[OrderItem]
+ 
+ 
 @app.get("/")
 def root():
     return {
         "status": "online",
         "system": "JARVIS v6",
-        "version": "0.5.0",
+        "version": "0.6.0",
         "modules": 11
     }
  
@@ -48,14 +62,14 @@ def jarvis_status():
     return {
         "system": "JARVIS v6",
         "status": "NORMAL",
-        "version": "0.5.0",
+        "version": "0.6.0",
         "modules": {
             "feed_engine": "ready",
             "pricing_engine": "online",
             "product_validator": "online",
+            "order_engine": "online",
             "truth_layer": "online",
             "control_layer": "online",
-            "order_engine": "pending",
             "tracking_engine": "pending",
             "security_engine": "pending",
             "legal_engine": "pending",
@@ -106,15 +120,112 @@ def validate_product(product: Product):
     }
  
  
-@app.get("/docs/jarvis")
-def jarvis_docs():
-    return {
-        "endpoints": {
-            "GET /": "Status systemu",
-            "GET /health": "Health check",
-            "GET /web": "Frontend web",
-            "GET /jarvis/status": "Status vsech modulu",
-            "POST /pricing/calculate": "Vypocet prodejni ceny",
-            "POST /products/validate": "Validace produktu"
-        }
+orders_db = []
+order_counter = 1
+ 
+ 
+@app.post("/orders/create")
+def create_order(order: Order):
+    global order_counter
+    issues = []
+    if not order.customer_email:
+        issues.append("MISSING_EMAIL")
+    if not order.customer_name:
+        issues.append("MISSING_NAME")
+    if not order.delivery_address:
+        issues.append("MISSING_ADDRESS")
+    if not order.items:
+        issues.append("NO_ITEMS")
+    if issues:
+        return {"status": "REJECTED", "issues": issues, "order_id": None}
+    total = sum(item.price_unit * item.quantity for item in order.items)
+    new_order = {
+        "id": order_counter,
+        "customer_email": order.customer_email,
+        "customer_name": order.customer_name,
+        "delivery_address": order.delivery_address,
+        "items": [item.dict() for item in order.items],
+        "price_total": round(total, 2),
+        "status": "CREATED",
+        "tracking_number": None,
+        "reason_code": None
     }
+    orders_db.append(new_order)
+    order_counter += 1
+    return {
+        "status": "CREATED",
+        "order_id": new_order["id"],
+        "price_total": new_order["price_total"],
+        "next_step": "Ceka na potvrzeni dodavatele",
+        "customer_email": order.customer_email
+    }
+ 
+ 
+@app.get("/orders")
+def list_orders():
+    return {"total": len(orders_db), "orders": orders_db}
+ 
+ 
+@app.get("/orders/{order_id}")
+def get_order(order_id: int):
+    for order in orders_db:
+        if order["id"] == order_id:
+            return order
+    raise HTTPException(status_code=404, detail="Objednavka nenalezena")
+ 
+ 
+@app.post("/orders/{order_id}/confirm")
+def confirm_order(order_id: int):
+    for order in orders_db:
+        if order["id"] == order_id:
+            order["status"] = "CONFIRMED"
+            order["reason_code"] = "MANUAL_CONFIRM"
+            return {"order_id": order_id, "status": "CONFIRMED", "message": "Objednavka potvrzena"}
+    raise HTTPException(status_code=404, detail="Objednavka nenalezena")
+ 
+ 
+@app.post("/orders/{order_id}/cancel")
+def cancel_order(order_id: int):
+    for order in orders_db:
+        if order["id"] == order_id:
+            if order["status"] in ["CONFIRMED", "SENT_TO_SUPPLIER"]:
+                return {"order_id": order_id, "error": "Nelze zrusit - jiz odeslano"}
+            order["status"] = "CANCELLED"
+            return {"order_id": order_id, "status": "CANCELLED"}
+    raise HTTPException(status_code=404, detail="Objednavka nenalezena")
+ 
+ 
+system_mode = {"mode": "NORMAL", "checkout_enabled": True}
+ 
+ 
+@app.get("/control/status")
+def control_status():
+    return system_mode
+ 
+ 
+@app.post("/control/stop_checkout")
+def stop_checkout():
+    system_mode["checkout_enabled"] = False
+    system_mode["mode"] = "DEGRADED"
+    return {"action": "STOP_CHECKOUT", "status": "done"}
+ 
+ 
+@app.post("/control/start_checkout")
+def start_checkout():
+    system_mode["checkout_enabled"] = True
+    system_mode["mode"] = "NORMAL"
+    return {"action": "START_CHECKOUT", "status": "done"}
+ 
+ 
+@app.post("/control/safe_mode")
+def safe_mode():
+    system_mode["checkout_enabled"] = False
+    system_mode["mode"] = "SAFE"
+    return {"action": "SAFE_MODE", "status": "activated"}
+ 
+ 
+@app.post("/control/normal_mode")
+def normal_mode():
+    system_mode["checkout_enabled"] = True
+    system_mode["mode"] = "NORMAL"
+    return {"action": "NORMAL_MODE", "status": "activated"}
