@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AutoDíly — Váš partner pro autodíly</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui,sans-serif;background:#0a0a0a;color:#fff}
+nav{background:#111;padding:16px 40px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #222}
+.logo{font-size:22px;font-weight:700;color:#1D9E75}
+.nav-links a{color:#aaa;text-decoration:none;margin-left:24px;font-size:14px}
+.hero{text-align:center;padding:80px 20px;background:linear-gradient(180deg,#0a0a0a,#111)}
+.hero h1{font-size:48px;font-weight:700;margin-bottom:16px}
+.hero h1 span{color:#1D9E75}
+.hero p{font-size:18px;color:#aaa;margin-bottom:40px}
+.search-box{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.search-box input{padding:14px 20px;border-radius:8px;border:1px solid #333;background:#1a1a1a;color:#fff;font-size:16px;width:360px}
+.search-box button{padding:14px 28px;border-radius:8px;border:none;background:#1D9E75;color:#fff;font-size:16px;cursor:pointer;font-weight:600}
+.features{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:24px;padding:60px 40px;max-width:1200px;margin:0 auto}
+.card{background:#111;border:1px solid #222;border-radius:12px;padding:28px}
+.card h3{font-size:18px;margin-bottom:10px;color:#1D9E75}
+.card p{color:#888;font-size:14px;line-height:1.6}
+.categories{padding:60px 40px;max-width:1200px;margin:0 auto}
+.categories h2{font-size:28px;margin-bottom:32px;text-align:center}
+.cat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px}
+.cat{background:#111;border:1px solid #222;border-radius:10px;padding:24px;text-align:center;cursor:pointer;transition:all .2s}
+.cat:hover{border-color:#1D9E75;background:#0d2218}
+.cat-icon{font-size:32px;margin-bottom:10px}
+.cat p{font-size:14px;color:#aaa}
+footer{background:#111;border-top:1px solid #222;padding:40px;text-align:center;color:#555;font-size:14px}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">⚡ AutoDíly</div>
+  <div class="nav-links">
+    <a href="#">Katalog</a>
+    <a href="#">Kompatibilita</a>
+    <a href="#">O nás</a>
+    <a href="#">Kontakt</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <h1>Správný díl pro <span>vaše auto</span></h1>
+  <p>Tisíce autodílů skladem. Rychlé dodání. Garantovaná kompatibilita.</p>
+  <div class="search-box">
+    <input type="text" placeholder="Zadejte SPZ, značku nebo název dílu...">
+    <button>Hledat díl</button>
+  </div>
+</div>
+
+<div class="features">
+  <div class="card">
+    <h3>✅ Garantovaná kompatibilita</h3>
+    <p>Každý díl ověřen pro váš konkrétní model auta. Žádné chybné objednávky.</p>
+  </div>
+  <div class="card">
+    <h3>🚚 Rychlé dodání</h3>
+    <p>Objednávky do 14:00 odesíláme tentýž den. Doručení do 24 hodin.</p>
+  </div>
+  <div class="card">
+    <h3>💰 Nejlepší ceny</h3>
+    <p>Přímé napojení na velkoobchody. Ceny bez zbytečných mezičlánků.</p>
+  </div>
+  <div class="card">
+    <h3>🔒 Bezpečný nákup</h3>
+    <p>Zabezpečená platba. 14 dní na vrácení. Zákaznická podpora 24/7.</p>
+  </div>
+</div>
+
+<div class="categories">
+  <h2>Populární kategorie</h2>
+  <div class="cat-grid">
+    <div class="cat"><div class="cat-icon">🛞</div><p>Brzdy</p></div>
+    <div class="cat"><div class="cat-icon">🔧</div><p>Filtry</p></div>
+    <div class="cat"><div class="cat-icon">⚙️</div><p>Motor</p></div>
+    <div class="cat"><div class="cat-icon">💡</div><p>Elektrika</p></div>
+    <div class="cat"><div class="cat-icon">🛠️</div><p>Odpružení</p></div>
+    <div class="cat"><div class="cat-icon">🌡️</div><p>Chlazení</p></div>
+  </div>
+</div>
+
+<footer>
+  <p>© 2025 AutoDíly — Váš partner pro autodíly | JARVIS v6 Powered</p>
+</footer>
+
+</body>
+</html>
