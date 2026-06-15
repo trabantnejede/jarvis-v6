@@ -3,89 +3,155 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AutoDíly — Váš partner pro autodíly</title>
+<title>AutoDily — Spravny dil pro vase auto</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:system-ui,sans-serif;background:#0a0a0a;color:#fff}
-nav{background:#111;padding:16px 40px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #222}
-.logo{font-size:22px;font-weight:700;color:#1D9E75}
-.nav-links a{color:#aaa;text-decoration:none;margin-left:24px;font-size:14px}
-.hero{text-align:center;padding:80px 20px;background:linear-gradient(180deg,#0a0a0a,#111)}
-.hero h1{font-size:48px;font-weight:700;margin-bottom:16px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,sans-serif;background:#0a0a0a;color:#ccc}
+nav{background:#0d0d0d;border-bottom:1px solid #1a1a1a;padding:14px 32px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-size:20px;font-weight:700;color:#1D9E75}
+.nav-links a{color:#555;text-decoration:none;margin-left:24px;font-size:14px;transition:color .15s}
+.nav-links a:hover{color:#ccc}
+.hero{text-align:center;padding:70px 20px 50px;background:linear-gradient(180deg,#080808,#0d0d0d)}
+.hero h1{font-size:42px;font-weight:700;color:#eee;margin-bottom:14px}
 .hero h1 span{color:#1D9E75}
-.hero p{font-size:18px;color:#aaa;margin-bottom:40px}
-.search-box{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
-.search-box input{padding:14px 20px;border-radius:8px;border:1px solid #333;background:#1a1a1a;color:#fff;font-size:16px;width:360px}
-.search-box button{padding:14px 28px;border-radius:8px;border:none;background:#1D9E75;color:#fff;font-size:16px;cursor:pointer;font-weight:600}
-.features{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:24px;padding:60px 40px;max-width:1200px;margin:0 auto}
-.card{background:#111;border:1px solid #222;border-radius:12px;padding:28px}
-.card h3{font-size:18px;margin-bottom:10px;color:#1D9E75}
-.card p{color:#888;font-size:14px;line-height:1.6}
-.categories{padding:60px 40px;max-width:1200px;margin:0 auto}
-.categories h2{font-size:28px;margin-bottom:32px;text-align:center}
-.cat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px}
-.cat{background:#111;border:1px solid #222;border-radius:10px;padding:24px;text-align:center;cursor:pointer;transition:all .2s}
-.cat:hover{border-color:#1D9E75;background:#0d2218}
-.cat-icon{font-size:32px;margin-bottom:10px}
-.cat p{font-size:14px;color:#aaa}
-footer{background:#111;border-top:1px solid #222;padding:40px;text-align:center;color:#555;font-size:14px}
+.hero p{font-size:16px;color:#555;margin-bottom:36px}
+.search-wrap{display:flex;gap:10px;justify-content:center;max-width:600px;margin:0 auto}
+.search-wrap input{flex:1;padding:14px 18px;border-radius:8px;border:1px solid #222;background:#111;color:#eee;font-size:15px;outline:none}
+.search-wrap input:focus{border-color:#1D9E75}
+.search-wrap button{padding:14px 24px;border-radius:8px;border:none;background:#1D9E75;color:#fff;font-size:15px;cursor:pointer;font-weight:600;white-space:nowrap}
+.search-wrap button:hover{background:#179068}
+.filters{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:16px}
+.filters select{padding:7px 12px;border-radius:6px;border:1px solid #222;background:#111;color:#888;font-size:13px;cursor:pointer}
+.results{max-width:1100px;margin:0 auto;padding:32px 20px}
+.results-header{font-size:13px;color:#444;margin-bottom:16px}
+.products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+.product-card{background:#0f0f0f;border:1px solid #1a1a1a;border-radius:10px;padding:20px;transition:border-color .15s}
+.product-card:hover{border-color:#2a2a2a}
+.product-cat{font-size:10px;color:#1D9E75;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
+.product-name{font-size:15px;font-weight:600;color:#eee;margin-bottom:4px}
+.product-brand{font-size:12px;color:#555;margin-bottom:8px}
+.product-oem{font-size:11px;color:#333;margin-bottom:12px;font-family:monospace}
+.product-car{font-size:12px;color:#444;margin-bottom:12px}
+.product-footer{display:flex;align-items:center;justify-content:space-between}
+.product-price{font-size:20px;font-weight:700;color:#1D9E75}
+.product-stock{font-size:11px;padding:3px 8px;border-radius:12px}
+.product-stock.in{background:#0d2218;color:#1D9E75;border:1px solid #1D9E75}
+.product-stock.out{background:#2a0d0d;color:#e05252;border:1px solid #e05252}
+.btn-add{width:100%;margin-top:12px;padding:9px;border-radius:7px;border:1px solid #1D9E75;background:transparent;color:#1D9E75;font-size:13px;cursor:pointer;font-weight:500;transition:all .15s}
+.btn-add:hover{background:#0d2218}
+.features{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;max-width:1100px;margin:0 auto;padding:0 20px 50px}
+.feat{background:#0f0f0f;border:1px solid #1a1a1a;border-radius:10px;padding:22px}
+.feat h3{font-size:14px;color:#1D9E75;margin-bottom:8px}
+.feat p{font-size:13px;color:#555;line-height:1.6}
+.empty{text-align:center;padding:48px;color:#333}
+footer{background:#0d0d0d;border-top:1px solid #1a1a1a;padding:24px;text-align:center;font-size:12px;color:#333}
 </style>
 </head>
 <body>
 
 <nav>
-  <div class="logo">⚡ AutoDíly</div>
+  <div class="logo">AutoDily</div>
   <div class="nav-links">
     <a href="#">Katalog</a>
     <a href="#">Kompatibilita</a>
-    <a href="#">O nás</a>
-    <a href="#">Kontakt</a>
+    <a href="#">Dodavatele</a>
+    <a href="/dashboard">JARVIS</a>
   </div>
 </nav>
 
 <div class="hero">
-  <h1>Správný díl pro <span>vaše auto</span></h1>
-  <p>Tisíce autodílů skladem. Rychlé dodání. Garantovaná kompatibilita.</p>
-  <div class="search-box">
-    <input type="text" placeholder="Zadejte SPZ, značku nebo název dílu...">
-    <button>Hledat díl</button>
+  <h1>Spravny dil pro <span>vase auto</span></h1>
+  <p>Tisice autodilu skladem. Rychle dodani. Garantovana kompatibilita.</p>
+  <div class="search-wrap">
+    <input type="text" id="search-input" placeholder="Hledat dil, znacku, OEM cislo..." onkeydown="if(event.key==='Enter')search()">
+    <button onclick="search()">Hledat</button>
+  </div>
+  <div class="filters">
+    <select id="filter-cat" onchange="search()">
+      <option value="">Vsechny kategorie</option>
+      <option value="Brzdy">Brzdy</option>
+      <option value="Filtry">Filtry</option>
+      <option value="Oleje">Oleje</option>
+      <option value="Remeny">Remeny</option>
+      <option value="Svicky">Svicky</option>
+    </select>
+    <select id="filter-car" onchange="search()">
+      <option value="">Vsechna auta</option>
+      <option value="Skoda">Skoda</option>
+      <option value="VW">VW</option>
+      <option value="Ford">Ford</option>
+    </select>
+  </div>
+</div>
+
+<div class="results">
+  <div class="results-header" id="results-header"></div>
+  <div class="products-grid" id="products-grid">
+    <div class="empty">Zadejte dotaz pro vyhledani dilu...</div>
   </div>
 </div>
 
 <div class="features">
-  <div class="card">
-    <h3>✅ Garantovaná kompatibilita</h3>
-    <p>Každý díl ověřen pro váš konkrétní model auta. Žádné chybné objednávky.</p>
-  </div>
-  <div class="card">
-    <h3>🚚 Rychlé dodání</h3>
-    <p>Objednávky do 14:00 odesíláme tentýž den. Doručení do 24 hodin.</p>
-  </div>
-  <div class="card">
-    <h3>💰 Nejlepší ceny</h3>
-    <p>Přímé napojení na velkoobchody. Ceny bez zbytečných mezičlánků.</p>
-  </div>
-  <div class="card">
-    <h3>🔒 Bezpečný nákup</h3>
-    <p>Zabezpečená platba. 14 dní na vrácení. Zákaznická podpora 24/7.</p>
-  </div>
+  <div class="feat"><h3>Garantovana kompatibilita</h3><p>Kazdy dil overen pro vas konkretni model auta. Zadne chybne objednavky.</p></div>
+  <div class="feat"><h3>Rychle dodani</h3><p>Objednavky do 14:00 odesilame tentyz den. Doruceni do 24 hodin.</p></div>
+  <div class="feat"><h3>Nejlepsi ceny</h3><p>Prime napojeni na velkoobchody. Ceny bez zbytecnych meziclanku.</p></div>
+  <div class="feat"><h3>Bezpecny nakup</h3><p>14 dni na vraceni. Zakaznicka podpora 24/7 pres JARVIS AI.</p></div>
 </div>
 
-<div class="categories">
-  <h2>Populární kategorie</h2>
-  <div class="cat-grid">
-    <div class="cat"><div class="cat-icon">🛞</div><p>Brzdy</p></div>
-    <div class="cat"><div class="cat-icon">🔧</div><p>Filtry</p></div>
-    <div class="cat"><div class="cat-icon">⚙️</div><p>Motor</p></div>
-    <div class="cat"><div class="cat-icon">💡</div><p>Elektrika</p></div>
-    <div class="cat"><div class="cat-icon">🛠️</div><p>Odpružení</p></div>
-    <div class="cat"><div class="cat-icon">🌡️</div><p>Chlazení</p></div>
-  </div>
-</div>
+<footer>AutoDily — JARVIS v6 Powered — 2025</footer>
 
-<footer>
-  <p>© 2025 AutoDíly — Váš partner pro autodíly | JARVIS v6 Powered</p>
-</footer>
+<script>
+const API = "";
 
+async function search() {
+  const q = document.getElementById("search-input").value.trim();
+  const cat = document.getElementById("filter-cat").value;
+  const car = document.getElementById("filter-car").value;
+
+  let url = "/products/search?q=" + encodeURIComponent(q);
+  if (cat) url += "&category=" + encodeURIComponent(cat);
+  if (car) url += "&car_brand=" + encodeURIComponent(car);
+
+  const grid = document.getElementById("products-grid");
+  const header = document.getElementById("results-header");
+  grid.innerHTML = '<div class="empty">Hledam...</div>';
+
+  try {
+    const r = await fetch(url);
+    const d = await r.json();
+    const products = d.results || [];
+
+    header.textContent = products.length > 0 ? "Nalezeno " + d.total + " vysledku" : "";
+
+    if (products.length === 0) {
+      grid.innerHTML = '<div class="empty">Zadne dily nenalezeny. Zkuste jiny dotaz.</div>';
+      return;
+    }
+
+    grid.innerHTML = products.map(p => `
+      <div class="product-card">
+        <div class="product-cat">${p.category || "Dil"}</div>
+        <div class="product-name">${p.name}</div>
+        <div class="product-brand">${p.brand}</div>
+        <div class="product-oem">OEM: ${p.oem || "N/A"}</div>
+        ${p.car_brand ? `<div class="product-car">Pro: ${p.car_brand} ${p.car_model || ""}</div>` : ""}
+        <div class="product-footer">
+          <div class="product-price">${p.price_sell ? p.price_sell.toFixed(2) + " Kc" : "Na dotaz"}</div>
+          <span class="product-stock ${p.stock > 0 ? "in" : "out"}">${p.stock > 0 ? "Skladem " + p.stock + " ks" : "Vyprodano"}</span>
+        </div>
+        <button class="btn-add" onclick="addToCart(${p.id}, '${p.name}', ${p.price_sell})">Pridat do kosiku</button>
+      </div>
+    `).join("");
+  } catch(e) {
+    grid.innerHTML = '<div class="empty">Chyba pri hledani. Zkuste znovu.</div>';
+  }
+}
+
+function addToCart(id, name, price) {
+  alert("Pridano do kosiku:\n" + name + "\n" + price + " Kc\n\nFunkce kosiku - brzy!");
+}
+
+search();
+</script>
 </body>
 </html>
